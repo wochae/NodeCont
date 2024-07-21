@@ -8,7 +8,8 @@
     "skipLibCheck": true,
     "experimentalDecorators": true,  // Decorators 사용을 위한 옵션 추가
     "emitDecoratorMetadata": true,  // Decorators 사용을 위한 옵션 추가
-    "outDir": "./dist"
+    "outDir": "./dist",
+    "typeRoots": ["./node_modules/@types", "./types"]
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules"]
