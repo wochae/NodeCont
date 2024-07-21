@@ -2,9 +2,12 @@
   "compilerOptions": {
     "target": "ES6",
     "module": "commonjs",
+    "moduleResolution": "node",
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
+    "experimentalDecorators": true,  // Decorators 사용을 위한 옵션 추가
+    "emitDecoratorMetadata": true,  // Decorators 사용을 위한 옵션 추가
     "outDir": "./dist"
   },
   "include": ["src/**/*"],
