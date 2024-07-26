@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { generateLetter, reviseLetter } from '../controller/LetterController';
+import { generateLetter, reviseLetter } from '../controllers/letterController';
 
 const router = Router();
 
