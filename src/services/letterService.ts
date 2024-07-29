@@ -1,8 +1,8 @@
-import { Request, Response } from 'express';
-import { getRepository } from 'typeorm';
-import { Letter } from '../entity/Letter';
 import axios from 'axios';
+import { getRepository } from 'typeorm';
+import { Letter } from '../entities/Letter';
 import 'dotenv/config';
+import {User} from "../entities/User";
 
 const CHATGPT_API_KEY = process.env.CHATGPT_API_KEY;
 
@@ -29,35 +29,22 @@ async function makeApiRequest(prompt: string): Promise<string> {
     }
 }
 
-export const generateLetter = async (req: Request, res: Response) => {
-    const { recipient, purpose, tone, keywords } = req.body;
+export const generateLetterService = async (recipient: string, purpose: string, tone: string, keywords: string): Promise<string> => {
     const prompt = `Write a letter to ${recipient}. The purpose of this letter is ${purpose}. The tone of the letter should be ${tone}. Include the following points: ${keywords}.`;
-
-    try {
-        const letterContent = await makeApiRequest(prompt);
-        const letterRepo = getRepository(Letter);
-        const letter = new Letter();
-        letter.recipient = recipient;
-        letter.purpose = purpose;
-        letter.tone = tone;
-        letter.keywords = keywords;
-        await letterRepo.save(letter);
-        res.json({ letter: letterContent });
-    } catch (error) {
-        console.error(error);
-        res.status(500).send('Error generating letter');
-    }
+    return await makeApiRequest(prompt);
 };
 
-export const reviseLetter = async (req: Request, res: Response) => {
-    const { letter, feedback } = req.body;
+export const reviseLetterService = async (letter: string, feedback: string): Promise<string> => {
     const prompt = `Here is a letter: ${letter}. Please revise it according to the following feedback: ${feedback}.`;
+    return await makeApiRequest(prompt);
+};
 
-    try {
-        const revisedLetter = await makeApiRequest(prompt);
-        res.json({ revisedLetter });
-    } catch (error) {
-        console.error(error);
-        res.status(500).send('Error revising letter');
+export const listReceivedLettersService = async (userId: string): Promise<Letter[]> => {
+    const letterRepo = getRepository(Letter);
+    const userRepo = getRepository(User);
+    const recipient = await userRepo.findOne({ where: { id: parseInt(userId, 10) } });
+    if (!recipient) {
+        throw new Error('User not found');
     }
+    return await letterRepo.find({ where: { recipient: recipient, isDraft: false } });
 };
